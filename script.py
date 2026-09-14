@@ -8,24 +8,6 @@ How it works:
   of the screen. Instead of trying to process real audio, this script watches
   that screen region with OCR and right-clicks the moment the phrase appears.
 
-Setup required:
-  1. In Minecraft: Options > Accessibility Settings > Show Subtitles = ON
-  2. Cast your line manually once so you know where the bobber lands, and
-     position the game window so the subtitle area is visible and unobstructed.
-  3. Install Tesseract OCR (the actual engine, not just the Python wrapper):
-       Windows: https://github.com/UB-Mannheim/tesseract/wiki  (installer)
-       macOS:   brew install tesseract
-       Linux:   sudo apt install tesseract-ocr
-  4. pip install mss pytesseract pyautogui pillow
-
-  On Windows, if pytesseract can't find the binary, uncomment and set the path
-  near the top of this file.
-
-Tuning:
-  CAPTURE_REGION is the box (in pixels) the script reads text from. Subtitles
-  in vanilla Minecraft appear bottom-right and stack upward as more happen,
-  so this region needs to be tall enough to catch a few lines. Adjust
-  left/top/width/height to match your resolution and UI scale.
 """
 
 import time
@@ -36,9 +18,6 @@ import mss
 import pytesseract
 import pyautogui
 from PIL import Image
-
-# --- Windows only, uncomment if pytesseract can't auto-find tesseract.exe ---
-# pytesseract.pytesseract.tesseract_cmd = r"C:\Program Files\Tesseract-OCR\tesseract.exe"
 
 # Screen region to OCR, in pixels. Tuned for a 1920x1080 screen with subtitles
 # in the default bottom-right position. Widen/heighten if text gets cut off.
@@ -70,8 +49,6 @@ def normalize(text: str) -> str:
 def capture_text(sct, region) -> str:
     shot = sct.grab(region)
     img = Image.frombytes("RGB", shot.size, shot.bgra, "raw", "BGRX")
-    # OCR works better on upscaled, high-contrast text; subtitles are white
-    # on a semi-transparent dark background, which usually OCRs fine as-is.
     return pytesseract.image_to_string(img)
 
 
