@@ -1,1 +1,0 @@
-Auto fishing script for Minecraft Sunlit Cobblemon mod.
